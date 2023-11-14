@@ -1,7 +1,9 @@
 from flask import Flask, request, jsonify
 import pickle
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 # Load the trained model
 model = pickle.load(open("./model/model.pkl", "rb"))
