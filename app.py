@@ -1,15 +1,18 @@
 from flask import Flask, request, jsonify
 import pickle
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
+CORS(app, origins='*')
 
 # Load the trained model
 model = pickle.load(open("./model/model.pkl", "rb"))
 
 # Define the selected features
-selected_features = ['texture_mean', 'area_mean', 'concavity_mean', 'area_se',
-                     'concavity_se', 'fractal_dimension_se', 'smoothness_worst',
-                     'concavity_worst', 'symmetry_worst', 'fractal_dimension_worst']
+selected_features = ['area_mean', 'area_se', 'concavity_mean', 'concavity_se', 'concavity_worst',
+                     'fractal_dimension_se',
+                     'fractal_dimension_worst', 'smoothness_worst', 'symmetry_worst', 'texture_mean']
 
 
 # API endpoint for making predictions
@@ -23,7 +26,9 @@ def predict():
         # Convert the prediction to a human-readable label
         diagnosis = "Malignant" if prediction[0] == 1 else "Benign"
 
-        return jsonify({"prediction": diagnosis})
+        response = jsonify({"prediction": diagnosis})
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response
     except Exception as e:
         return jsonify({"error": str(e)})
 
